@@ -24,15 +24,16 @@ def get_subreddits(args):
 
 
 def get_keywords(args):
-    keywords = []
+    keywords = set()
     keywords_path = "keywords.txt"
     if args.path:
         keywords_path = os.path.join(path, keywords_path)
     with open(keywords_path, "r") as f:
         lines = f.readlines()
         for line in lines:
+            line = line.strip()
             if len(line) > 0:
-                keywords.append(line)
+                keywords.add(line)
     return keywords
 
 
@@ -64,15 +65,25 @@ if __name__ == '__main__':
     while True:
         # Get the top 5 values from our subreddit
         subreddit = reddit.subreddit(get_subreddits(args))
-        keywords = get_subreddits(args)
-        for submission in subreddit.hot(limit=500):
+        keywords = get_keywords(args)
+        for submission in subreddit.stream.submissions():
             # If we haven't replied to this post before
+            print(submission.title)
             if submission.id not in posts_replied_to:
                 for keyword in keywords:
                     if keyword in submission.title:
-                        cross_post = submission.crosspost(subreddit=R_SUBREDDIT,
-                                                          send_replies=False)
-
+                        print(keyword, submission.title)
+                        try:
+                            cross_post = submission.crosspost(subreddit=R_SUBREDDIT,
+                                                              send_replies=False)
+                            break
+                        except:
+                            time.sleep(900)
+                            cross_post = submission.crosspost(subreddit=R_SUBREDDIT,
+                                                              send_replies=False)
+                            break
+                        finally:
+                            continue
                         # Store the current id into our list
                         posts_replied_to.append(submission.id)
 
