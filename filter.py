@@ -46,49 +46,49 @@ if __name__ == '__main__':
         '-p', '--path', help='set paths to look for default files (keywords.txt, subreddits.txt)', action='store')
 
     args = parser.parse_args()
-    write_to = "posts_replied_to.txt"
+    write_to = "submitted.txt"
+    if args.path:
+        write_to = os.path.join(args.path, write_to)
 
-    # Create the Reddit instance
     reddit = praw.Reddit(client_id=R_CID, client_secret=R_SECRET,
                          password=R_PASSWORD, user_agent="USERAGENT", username=R_USERNAME)
 
-    # Have we run this code before? If not, create an empty list
     if not os.path.isfile(write_to):
-        posts_replied_to = []
-    # If we have run the code before, load the list of posts we have replied to
+        submitted = []
     else:
-        # Read the file into a list and remove any empty values
         with open(write_to, "r") as f:
-            posts_replied_to = f.read()
-            posts_replied_to = posts_replied_to.split("\n")
-            posts_replied_to = list(filter(None, posts_replied_to))
+            submitted = f.read()
+            submitted = submitted.split("\n")
+            submitted = list(filter(None, submitted))
 
-    while True:
-        # Get the top 5 values from our subreddit
+    try:
         subreddit = reddit.subreddit(get_subreddits(args))
         keywords = get_keywords(args)
         for submission in subreddit.stream.submissions():
-            # If we haven't replied to this post before
             print(submission.title)
-            if submission.id not in posts_replied_to:
+            if submission.id not in submitted:
                 for keyword in keywords:
                     if keyword in submission.title:
-                        print(keyword, submission.title)
                         try:
                             cross_post = submission.crosspost(subreddit=R_SUBREDDIT,
                                                               send_replies=False)
                             break
                         except:
-                            time.sleep(900)
+                            print("Waiting... 0 minutes")
+                            time.sleep(300)
+                            print("Waiting... 5 minutes")
+                            time.sleep(300)
+                            print("Waiting... 10 minutes")
+                            time.sleep(300)
+                            print("Done waiting... 15 minutes")
                             cross_post = submission.crosspost(subreddit=R_SUBREDDIT,
                                                               send_replies=False)
                             break
-                        finally:
-                            continue
-                        # Store the current id into our list
-                        posts_replied_to.append(submission.id)
-
-        # Write our updated list back to the file
+                        submitted.append(submission.id)
+    except KeyboardInterrupt:
         with open(write_to, "w") as f:
-            for post_id in posts_replied_to:
+            for post_id in submitted:
                 f.write(post_id + "\n")
+    except Exception as e:
+        print(e)
+        exit()
