@@ -1,6 +1,7 @@
 import argparse
 import os
 import praw
+import time
 
 R_USERNAME = os.environ["USERNAME"]
 R_PASSWORD = os.environ["PASSWORD"]
