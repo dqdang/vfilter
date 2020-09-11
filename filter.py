@@ -49,7 +49,6 @@ def get_keywords(args):
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser(
         description='Filter a subreddit by keywords')
     parser.add_argument(
