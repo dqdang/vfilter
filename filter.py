@@ -53,7 +53,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Filter a subreddit by keywords')
     parser.add_argument(
-        '-p', '--path', help='set paths to look for default files (keywords.txt, subreddits.txt)', action='store')
+        '-p', '--path', help='Set paths to look for default files (keywords.txt, subreddits.txt)', action='store')
 
     args = parser.parse_args()
     write_to = "submitted.txt"
