@@ -1,22 +1,8 @@
 import argparse
 import os
+from peekaboo import *
 import praw
 import time
-
-try:
-    R_USERNAME = os.environ["USERNAME"]
-    R_PASSWORD = os.environ["PASSWORD"]
-    R_CID = os.environ["R_CID"]
-    R_SECRET = os.environ["R_SECRET"]
-    R_SUBREDDIT = os.environ["SUBREDDIT"]
-
-except KeyError as e:
-    with open("creds.txt", "r") as f:
-        R_USERNAME = f.readline().strip()
-        R_PASSWORD = f.readline().strip()
-        R_CID = f.readline().strip()
-        R_SECRET = f.readline().strip()
-        R_SUBREDDIT = f.readline().strip()
 
 
 def get_subreddits(args):
